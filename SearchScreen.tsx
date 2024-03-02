@@ -19,6 +19,8 @@ const SearchScreen: React.FC = () => {
     const [debouncedQuery, setDebouncedQuery] = useState<string>(query);
     const [repos, setRepos] = useState<RepositoryItem[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
+    const [noResults, setNoResults] = useState<boolean>(false);
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -30,7 +32,10 @@ const SearchScreen: React.FC = () => {
             clearTimeout(handler);
         };
     }, [query]);
+
     const fetchRepos = async () => {
+        setError('');
+        setNoResults(false);
         if (debouncedQuery.trim() === '') {
             setRepos([]);
             return;
@@ -43,9 +48,13 @@ const SearchScreen: React.FC = () => {
                 },
             });
             const data = await response.json();
-            setRepos(data.items);
+            if (data.items.length === 0) {
+                setNoResults(true);
+            } else {
+                setRepos(data.items);
+            }
         } catch (error) {
-            console.error("Error fetching data: ", error);
+            setError("Failed to fetch data. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -63,6 +72,10 @@ const SearchScreen: React.FC = () => {
             <SearchBar onSearchChange={setQuery} />
             {isLoading ? (
                 <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
+            ) : error ? (
+                <Text style={styles.errorText}>{error}</Text>
+            ) : noResults ? (
+                <Text style={styles.errorText}>No results found.</Text>
             ) : (
                 <FlatList
                     data={repos}
@@ -151,6 +164,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    errorText: {
+        textAlign: 'center',
+        color: 'red',
+        fontSize: 16,
     },
 });
 
