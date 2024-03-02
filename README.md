@@ -1,6 +1,6 @@
 # GithubSearch
 
-A simple Github Search App
+A simple Github Search App with debouncing every 500 ms to improve search functionality, and simple error handeling. 
 
 Screen 1 ![simulator_screenshot_8A55DCAF-F7DF-4B1A-8D86-C959B652277E](https://github.com/sdess09/GithubSearch/assets/37374498/eeecc1cc-7b43-4ef1-a014-3ef05a59edbd)
 
